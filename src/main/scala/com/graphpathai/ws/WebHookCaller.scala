@@ -4,6 +4,7 @@ import akka.actor.ActorSystem
 import com.graphpathai.utils.DurationOps._
 import com.graphpathai.utils.FutureOps.Retry
 import com.typesafe.config.Config
+import com.typesafe.scalalogging.StrictLogging
 import javax.inject.{Inject, Singleton}
 import play.api.libs.ws.DefaultBodyWritables._
 import play.api.libs.ws.StandaloneWSResponse
@@ -15,7 +16,7 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 @Singleton
 class WebHookCaller @Inject()(ws: StandaloneAhcWSClient, config: Config)
                              (implicit ec: ExecutionContext, actorSystem: ActorSystem)
-  extends Retry {
+  extends Retry with StrictLogging {
 
   private implicit val webHookConfig: Config = config.getConfig("webhook")
   private val url = webHookConfig.getString("url")
@@ -30,6 +31,7 @@ class WebHookCaller @Inject()(ws: StandaloneAhcWSClient, config: Config)
     Await.result(execute(v), timeout)
 
   def execute(v: Array[Byte]): Future[StandaloneWSResponse] = retry {
+    logger.info(s"$method $url - Headers: $headers")
     ws.url(url)
       .addHttpHeaders(headers: _*)
       .withMethod(method)

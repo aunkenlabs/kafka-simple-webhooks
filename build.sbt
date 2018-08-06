@@ -1,6 +1,6 @@
 name := "kafka-simple-webhooks"
 
-version := "0.1"
+version := "0.2"
 
 scalaVersion := "2.12.6"
 
@@ -13,8 +13,7 @@ libraryDependencies ++= Seq(
   "org.apache.kafka" % "kafka-streams" % "1.1.0",
   "com.typesafe" % "config" % "1.3.2",
   "com.typesafe.play" %% "play-ahc-ws-standalone" % "1.1.9",
-  "com.typesafe.scala-logging" %% "scala-logging" % "3.7.2",
-  "org.scalatest" %% "scalatest" % "3.0.5" % Test
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.7.2"
 )
 
 enablePlugins(JavaAppPackaging)
