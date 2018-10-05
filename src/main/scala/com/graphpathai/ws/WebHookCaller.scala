@@ -25,7 +25,7 @@ class WebHookCaller @Inject()(ws: StandaloneAhcWSClient, config: Config)
     .unwrapped().asScala
     .map { case (k, v) => k -> v.toString }
     .toSeq
-  private val timeout = webHookConfig.getDuration("timeout")
+  private val timeout = webHookConfig.getDuration("retry.timeout")
 
   def syncExecute(v: Array[Byte]): StandaloneWSResponse =
     Await.result(execute(v), timeout)
