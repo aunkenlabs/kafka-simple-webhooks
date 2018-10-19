@@ -19,6 +19,7 @@ class Stream @Inject()(wh: WebHookCaller)(implicit config: Config) extends Stric
     val builder = new StreamsBuilder
     builder
       .stream[Array[Byte], Array[Byte]](topic)
+      .peek((k, v) => logger.debug(s"key: '$k' - value: '$v'"))
       .foreach((k, v) => wh.syncExecute(v))
     builder.build()
   }

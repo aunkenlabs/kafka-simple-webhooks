@@ -6,6 +6,7 @@ Send kafka messages to a URL.
 - Send messages at least once.
 - Request method and headers are configurable.
 - Retries requests with exponential backoff.
+- Agnostic of message type (reads the message as byte array and send it to the url as is).
 
 ## Description
 Using kafka streams client, consumes messages from kafka on the configured topic.

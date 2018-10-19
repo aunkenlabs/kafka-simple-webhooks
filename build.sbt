@@ -1,16 +1,15 @@
 name := "kafka-simple-webhooks"
 
-version := "0.3"
+version := "0.4"
 
-scalaVersion := "2.12.6"
+scalaVersion := "2.12.7"
 
 scalacOptions := Seq("-deprecation", "-feature")
 
 libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "com.google.inject" % "guice" % "4.1.0",
-  "org.apache.kafka" % "kafka-clients" % "1.1.0",
-  "org.apache.kafka" % "kafka-streams" % "1.1.0",
+  "org.apache.kafka" % "kafka-streams" % "1.1.1",
   "com.typesafe" % "config" % "1.3.2",
   "com.typesafe.play" %% "play-ahc-ws-standalone" % "1.1.9",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.7.2"
