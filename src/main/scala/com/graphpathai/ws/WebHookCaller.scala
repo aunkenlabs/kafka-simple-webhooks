@@ -8,6 +8,7 @@ import com.typesafe.scalalogging.StrictLogging
 import javax.inject.{Inject, Singleton}
 import play.api.libs.ws.DefaultBodyWritables._
 import play.api.libs.ws.StandaloneWSResponse
+import play.api.libs.ws.WSAuthScheme.BASIC
 import play.api.libs.ws.ahc.StandaloneAhcWSClient
 
 import scala.collection.JavaConverters._
@@ -26,16 +27,32 @@ class WebHookCaller @Inject()(ws: StandaloneAhcWSClient, config: Config)
     .map { case (k, v) => k -> v.toString }
     .toSeq
   private val timeout = webHookConfig.getDuration("retry.timeout")
+  private val basicAuth =
+    if (webHookConfig.getBoolean("basicAuth.enabled"))
+      Some(
+        webHookConfig.getString("basicAuth.username") ->
+          webHookConfig.getString("basicAuth.password")
+      )
+    else
+      None
 
   def syncExecute(v: Array[Byte]): StandaloneWSResponse =
     Await.result(execute(v), timeout)
 
   def execute(v: Array[Byte]): Future[StandaloneWSResponse] = retry {
-    logger.info(s"$method $url - Headers: $headers")
-    ws.url(url)
+    logger.info(s"$method $url - Headers: ${headers.map { case (h, hv) => s"$h=$hv" }.mkString(", ")}")
+    val request = ws.url(url)
       .addHttpHeaders(headers: _*)
       .withMethod(method)
       .withBody(v)
+
+    val requestWithAuth = basicAuth
+      .map {
+        case (username, password) => request.withAuth(username, password, BASIC)
+      }
+      .getOrElse(request)
+
+    requestWithAuth
       .execute()
       .map(only2xx)
   }
